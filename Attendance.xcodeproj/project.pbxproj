@@ -7,18 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B9F8D4D02C88BED500021C8B /* attendanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F8D4CF2C88BED500021C8B /* attendanceApp.swift */; };
+		B992B7002C88EA1200072EDC /* CSV Generator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B992B6FF2C88EA1200072EDC /* CSV Generator.swift */; };
+		B9F8D4D02C88BED500021C8B /* AttendanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F8D4CF2C88BED500021C8B /* AttendanceApp.swift */; };
 		B9F8D4D22C88BED500021C8B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F8D4D12C88BED500021C8B /* ContentView.swift */; };
 		B9F8D4D42C88BED700021C8B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9F8D4D32C88BED700021C8B /* Assets.xcassets */; };
 		B9F8D4D72C88BED700021C8B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9F8D4D62C88BED700021C8B /* Preview Assets.xcassets */; };
+		B9F8D4DE2C88E93100021C8B /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F8D4DD2C88E93100021C8B /* CustomTextField.swift */; };
+		B9F8D4E02C88E94B00021C8B /* CustomButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F8D4DF2C88E94B00021C8B /* CustomButtonStyle.swift */; };
+		B9F8D4E22C88E95E00021C8B /* EntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F8D4E12C88E95E00021C8B /* EntryView.swift */; };
+		B9F8D4E42C88E97500021C8B /* EntryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F8D4E32C88E97500021C8B /* EntryStore.swift */; };
+		B9F8D4E82C88E9AD00021C8B /* TypewriterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F8D4E72C88E9AD00021C8B /* TypewriterView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B992B6FF2C88EA1200072EDC /* CSV Generator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CSV Generator.swift"; sourceTree = "<group>"; };
 		B9F8D4CC2C88BED500021C8B /* Attendance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Attendance.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B9F8D4CF2C88BED500021C8B /* attendanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = attendanceApp.swift; sourceTree = "<group>"; };
+		B9F8D4CF2C88BED500021C8B /* AttendanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendanceApp.swift; sourceTree = "<group>"; };
 		B9F8D4D12C88BED500021C8B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B9F8D4D32C88BED700021C8B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B9F8D4D62C88BED700021C8B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B9F8D4DD2C88E93100021C8B /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
+		B9F8D4DF2C88E94B00021C8B /* CustomButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtonStyle.swift; sourceTree = "<group>"; };
+		B9F8D4E12C88E95E00021C8B /* EntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryView.swift; sourceTree = "<group>"; };
+		B9F8D4E32C88E97500021C8B /* EntryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryStore.swift; sourceTree = "<group>"; };
+		B9F8D4E72C88E9AD00021C8B /* TypewriterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypewriterView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,8 +63,14 @@
 		B9F8D4CE2C88BED500021C8B /* attendance */ = {
 			isa = PBXGroup;
 			children = (
-				B9F8D4CF2C88BED500021C8B /* attendanceApp.swift */,
+				B9F8D4CF2C88BED500021C8B /* AttendanceApp.swift */,
 				B9F8D4D12C88BED500021C8B /* ContentView.swift */,
+				B9F8D4DD2C88E93100021C8B /* CustomTextField.swift */,
+				B9F8D4DF2C88E94B00021C8B /* CustomButtonStyle.swift */,
+				B9F8D4E12C88E95E00021C8B /* EntryView.swift */,
+				B9F8D4E32C88E97500021C8B /* EntryStore.swift */,
+				B992B6FF2C88EA1200072EDC /* CSV Generator.swift */,
+				B9F8D4E72C88E9AD00021C8B /* TypewriterView.swift */,
 				B9F8D4D32C88BED700021C8B /* Assets.xcassets */,
 				B9F8D4D52C88BED700021C8B /* Preview Content */,
 			);
@@ -137,8 +155,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9F8D4E82C88E9AD00021C8B /* TypewriterView.swift in Sources */,
+				B992B7002C88EA1200072EDC /* CSV Generator.swift in Sources */,
+				B9F8D4E42C88E97500021C8B /* EntryStore.swift in Sources */,
+				B9F8D4E02C88E94B00021C8B /* CustomButtonStyle.swift in Sources */,
+				B9F8D4E22C88E95E00021C8B /* EntryView.swift in Sources */,
 				B9F8D4D22C88BED500021C8B /* ContentView.swift in Sources */,
-				B9F8D4D02C88BED500021C8B /* attendanceApp.swift in Sources */,
+				B9F8D4D02C88BED500021C8B /* AttendanceApp.swift in Sources */,
+				B9F8D4DE2C88E93100021C8B /* CustomTextField.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,6 +316,7 @@
 				REGISTER_APP_GROUPS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -326,6 +351,7 @@
 				REGISTER_APP_GROUPS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
