@@ -1,33 +1,27 @@
-
-
 import SwiftUI
+import Firebase
 
 @main
-struct TextEntryApp: App {
-    @StateObject private var entryStore = EntryStore()
+struct AttendanceApp: App {
+    @StateObject private var attendanceStore = AttendanceStore()
+    @State private var showAdminPanel = false
+    
+    init() {
+        FirebaseApp.configure()
+    }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(entryStore)
+                .environmentObject(attendanceStore)
+                .sheet(isPresented: $showAdminPanel) {
+                    AdminPanelView()
+                }
         }
         .commands {
-            CommandGroup(replacing: .newItem) {}
-            CommandGroup(replacing: .pasteboard) {}
-            CommandGroup(replacing: .undoRedo) {}
-            
-            CommandMenu("Entries") {
-                Button("Clear All Entries") {
-                    entryStore.clearAllEntries()
-                }
-                //.keyboardShortcut("D", modifiers: [.command, .shift])
-                
-                Divider()
-                
-                Button("Toggle Entries Visibility") {
-                    withAnimation {
-                        entryStore.toggleEntriesVisibility()
-                    }
+            CommandGroup(after: .sidebar) {
+                Button("Open Admin Panel") {
+                    showAdminPanel = true
                 }
                 .keyboardShortcut("E", modifiers: [.command])
             }

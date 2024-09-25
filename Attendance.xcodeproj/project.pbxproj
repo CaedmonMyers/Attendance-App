@@ -7,7 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B931035F2C9BDFA0006541D7 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = B931035E2C9BDFA0006541D7 /* CodeScanner */; };
+		B93103612C9BDFD0006541D7 /* AttendanceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93103602C9BDFD0006541D7 /* AttendanceStore.swift */; };
+		B93103632C9BE008006541D7 /* AdminPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93103622C9BE008006541D7 /* AdminPanelView.swift */; };
+		B93103652C9BE137006541D7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B93103642C9BE137006541D7 /* GoogleService-Info.plist */; };
 		B992B7002C88EA1200072EDC /* CSV Generator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B992B6FF2C88EA1200072EDC /* CSV Generator.swift */; };
+		B9CD58582C9BE90900641F39 /* Barcodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CD58572C9BE90900641F39 /* Barcodes.swift */; };
+		B9EE69492C9BDF240084F34D /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B9EE69482C9BDF240084F34D /* FirebaseAnalytics */; };
+		B9EE694B2C9BDF240084F34D /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B9EE694A2C9BDF240084F34D /* FirebaseAuth */; };
+		B9EE694D2C9BDF240084F34D /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = B9EE694C2C9BDF240084F34D /* FirebaseAuthCombine-Community */; };
+		B9EE694F2C9BDF240084F34D /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B9EE694E2C9BDF240084F34D /* FirebaseDatabase */; };
+		B9EE69512C9BDF240084F34D /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B9EE69502C9BDF240084F34D /* FirebaseFirestore */; };
+		B9EE69532C9BDF240084F34D /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = B9EE69522C9BDF240084F34D /* FirebaseFirestoreCombine-Community */; };
+		B9EE69552C9BDF240084F34D /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B9EE69542C9BDF240084F34D /* FirebaseStorage */; };
+		B9EE69572C9BDF240084F34D /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = B9EE69562C9BDF240084F34D /* FirebaseStorageCombine-Community */; };
 		B9F8D4D02C88BED500021C8B /* AttendanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F8D4CF2C88BED500021C8B /* AttendanceApp.swift */; };
 		B9F8D4D22C88BED500021C8B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F8D4D12C88BED500021C8B /* ContentView.swift */; };
 		B9F8D4D42C88BED700021C8B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9F8D4D32C88BED700021C8B /* Assets.xcassets */; };
@@ -20,7 +33,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B93103602C9BDFD0006541D7 /* AttendanceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendanceStore.swift; sourceTree = "<group>"; };
+		B93103622C9BE008006541D7 /* AdminPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminPanelView.swift; sourceTree = "<group>"; };
+		B93103642C9BE137006541D7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B93103692C9BE5ED006541D7 /* Attendance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Attendance.entitlements; path = Attendance/Attendance.entitlements; sourceTree = "<group>"; };
 		B992B6FF2C88EA1200072EDC /* CSV Generator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CSV Generator.swift"; sourceTree = "<group>"; };
+		B9CD58572C9BE90900641F39 /* Barcodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Barcodes.swift; sourceTree = "<group>"; };
 		B9F8D4CC2C88BED500021C8B /* Attendance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Attendance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9F8D4CF2C88BED500021C8B /* AttendanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendanceApp.swift; sourceTree = "<group>"; };
 		B9F8D4D12C88BED500021C8B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -38,6 +56,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9EE69492C9BDF240084F34D /* FirebaseAnalytics in Frameworks */,
+				B9EE694D2C9BDF240084F34D /* FirebaseAuthCombine-Community in Frameworks */,
+				B9EE69572C9BDF240084F34D /* FirebaseStorageCombine-Community in Frameworks */,
+				B9EE694F2C9BDF240084F34D /* FirebaseDatabase in Frameworks */,
+				B9EE69532C9BDF240084F34D /* FirebaseFirestoreCombine-Community in Frameworks */,
+				B9EE69552C9BDF240084F34D /* FirebaseStorage in Frameworks */,
+				B9EE69512C9BDF240084F34D /* FirebaseFirestore in Frameworks */,
+				B9EE694B2C9BDF240084F34D /* FirebaseAuth in Frameworks */,
+				B931035F2C9BDFA0006541D7 /* CodeScanner in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,6 +74,7 @@
 		B9F8D4C32C88BED500021C8B = {
 			isa = PBXGroup;
 			children = (
+				B93103692C9BE5ED006541D7 /* Attendance.entitlements */,
 				B9F8D4CE2C88BED500021C8B /* attendance */,
 				B9F8D4CD2C88BED500021C8B /* Products */,
 			);
@@ -63,8 +91,12 @@
 		B9F8D4CE2C88BED500021C8B /* attendance */ = {
 			isa = PBXGroup;
 			children = (
+				B93103642C9BE137006541D7 /* GoogleService-Info.plist */,
 				B9F8D4CF2C88BED500021C8B /* AttendanceApp.swift */,
+				B93103602C9BDFD0006541D7 /* AttendanceStore.swift */,
 				B9F8D4D12C88BED500021C8B /* ContentView.swift */,
+				B9CD58572C9BE90900641F39 /* Barcodes.swift */,
+				B93103622C9BE008006541D7 /* AdminPanelView.swift */,
 				B9F8D4DD2C88E93100021C8B /* CustomTextField.swift */,
 				B9F8D4DF2C88E94B00021C8B /* CustomButtonStyle.swift */,
 				B9F8D4E12C88E95E00021C8B /* EntryView.swift */,
@@ -129,6 +161,10 @@
 				Base,
 			);
 			mainGroup = B9F8D4C32C88BED500021C8B;
+			packageReferences = (
+				B9EE69472C9BDF240084F34D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				B931035D2C9BDFA0006541D7 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+			);
 			productRefGroup = B9F8D4CD2C88BED500021C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -144,6 +180,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B9F8D4D72C88BED700021C8B /* Preview Assets.xcassets in Resources */,
+				B93103652C9BE137006541D7 /* GoogleService-Info.plist in Resources */,
 				B9F8D4D42C88BED700021C8B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -160,7 +197,10 @@
 				B9F8D4E42C88E97500021C8B /* EntryStore.swift in Sources */,
 				B9F8D4E02C88E94B00021C8B /* CustomButtonStyle.swift in Sources */,
 				B9F8D4E22C88E95E00021C8B /* EntryView.swift in Sources */,
+				B93103612C9BDFD0006541D7 /* AttendanceStore.swift in Sources */,
 				B9F8D4D22C88BED500021C8B /* ContentView.swift in Sources */,
+				B9CD58582C9BE90900641F39 /* Barcodes.swift in Sources */,
+				B93103632C9BE008006541D7 /* AdminPanelView.swift in Sources */,
 				B9F8D4D02C88BED500021C8B /* AttendanceApp.swift in Sources */,
 				B9F8D4DE2C88E93100021C8B /* CustomTextField.swift in Sources */,
 			);
@@ -293,6 +333,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Attendance/Attendance.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"attendance/Preview Content\"";
@@ -300,6 +341,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Attendance;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to scan barcodes";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -310,6 +352,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.doorhingeapps.attendance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -328,6 +371,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Attendance/Attendance.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"attendance/Preview Content\"";
@@ -335,6 +379,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Attendance;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to scan barcodes";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -345,6 +390,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.doorhingeapps.attendance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -380,6 +426,73 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B931035D2C9BDFA0006541D7 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+		B9EE69472C9BDF240084F34D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B931035E2C9BDFA0006541D7 /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B931035D2C9BDFA0006541D7 /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+		B9EE69482C9BDF240084F34D /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9EE69472C9BDF240084F34D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		B9EE694A2C9BDF240084F34D /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9EE69472C9BDF240084F34D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		B9EE694C2C9BDF240084F34D /* FirebaseAuthCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9EE69472C9BDF240084F34D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseAuthCombine-Community";
+		};
+		B9EE694E2C9BDF240084F34D /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9EE69472C9BDF240084F34D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		B9EE69502C9BDF240084F34D /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9EE69472C9BDF240084F34D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		B9EE69522C9BDF240084F34D /* FirebaseFirestoreCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9EE69472C9BDF240084F34D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseFirestoreCombine-Community";
+		};
+		B9EE69542C9BDF240084F34D /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9EE69472C9BDF240084F34D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		B9EE69562C9BDF240084F34D /* FirebaseStorageCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9EE69472C9BDF240084F34D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseStorageCombine-Community";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B9F8D4C42C88BED500021C8B /* Project object */;
 }

@@ -1,17 +1,18 @@
 import SwiftUI
+import AVFoundation
+import Vision
 
 struct ContentView: View {
-    @EnvironmentObject private var entryStore: EntryStore
-    @State private var newEntryName = ""
-    @State private var csvData = ""
-    @State private var isExporting = false
+    @EnvironmentObject private var attendanceStore: AttendanceStore
+    @State private var newEntryId = ""
+    @State private var isScanning = false
     @State private var successViewShown = false
-    @State private var lastEntry = ""
+    @StateObject private var viewModel = QRScannerViewModel()
     
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                LinearGradient(colors: [Color.blue.opacity(successViewShown ? 0.7: 0.4), Color.purple.opacity(successViewShown ? 0.7: 0.4)], startPoint: .leading, endPoint: .trailing)
+                LinearGradient(colors: [Color.blue.opacity(successViewShown ? 0.7 : 0.4), Color.purple.opacity(successViewShown ? 0.7 : 0.4)], startPoint: .leading, endPoint: .trailing)
                     .edgesIgnoringSafeArea(.all)
                     .animation(.default, value: successViewShown)
                 
@@ -20,126 +21,110 @@ struct ContentView: View {
                     
                     HStack {
                         VStack {
-                            
                             Text("Check In")
                                 .foregroundStyle(Color.white)
                                 .font(.system(size: 50, weight: .bold, design: .rounded))
-                                .animation(.default, value: newEntryName)
+                                .animation(.default, value: newEntryId)
                             
-                            CustomTextField(text: $newEntryName, placeholder: "Enter a new item", onCommit: addEntry)
+                            CustomTextField(text: $newEntryId, placeholder: "Enter 6-digit ID", onCommit: checkIn)
                                 .frame(width: 300, height: 50)
                                 .padding()
-                                .animation(.default, value: newEntryName)
+                                .animation(.default, value: newEntryId)
                                 .onKeyPress(.escape) {
-                                    newEntryName = ""
+                                    newEntryId = ""
                                     return .handled
                                 }
                             
-                            if !newEntryName.isEmpty {
-                                Button(action: addEntry) {
-                                    Text("Add Entry")
+                            if !newEntryId.isEmpty {
+                                Button(action: checkIn) {
+                                    Text("Check In")
                                 }
                                 .buttonStyle(CustomButtonStyle())
-                                .animation(.default, value: newEntryName)
+                                .animation(.default, value: newEntryId)
                             }
                             
-                            if entryStore.showEntries {
-                                ScrollView {
-                                    VStack(spacing: 10) {
-                                        ForEach(entryStore.entries) { entry in
-                                            EntryView(entry: entry)
-                                        }
-                                    }
-                                    .padding()
-                                }
-                                .frame(maxHeight: 300)
-                                
-                                Button("Export Data", action: prepareExport)
-                                    .buttonStyle(CustomButtonStyle())
-                                    .padding(20)
-                            }
+                            Button("Scan Barcode") {
+                                isScanning = true
+                                            }
+                                            .buttonStyle(CustomButtonStyle())
+                                            .padding()
                             
                         }.animation(.default, value: successViewShown)
-                            .frame(width: successViewShown ? geo.size.width/3: geo.size.width)
+                        .frame(width: successViewShown ? geo.size.width/3 : geo.size.width)
                         
-                        //if successViewShown {
                         VStack {
-                            Text("Success!")
-                                .foregroundStyle(Color.white)
-                                .font(.system(size: 50, weight: .bold, design: .rounded))
-                                .animation(.default, value: successViewShown)
-                                .padding(20)
-                            
-                            Text("You have been checked in as:")
-                                .foregroundStyle(Color.white)
-                                .font(.system(size: 20, weight: .medium, design: .rounded))
-                                .animation(.default, value: successViewShown)
-                                .padding(10)
-                            
-                            //                                Text(entryStore.entries.last?.name ?? "")
-                            //                                    .foregroundStyle(Color.white)
-                            //                                    .font(.system(size: 30, weight: .black, design: .rounded))
-                            //                                    .animation(.default, value: newEntryName)
-                            TypewriterView(text: $lastEntry)
-                                .animation(.default, value: successViewShown)
-                            
+                            if let user = attendanceStore.checkedInUser {
+                                Text("Success!")
+                                    .foregroundStyle(Color.white)
+                                    .font(.system(size: 50, weight: .bold, design: .rounded))
+                                    .padding(20)
+                                
+                                Text("You have been checked in as:")
+                                    .foregroundStyle(Color.white)
+                                    .font(.system(size: 20, weight: .medium, design: .rounded))
+                                    .padding(10)
+                                
+                                TypewriterView(text: .constant(user.name))
+                                    .foregroundStyle(Color.white)
+                                    .font(.system(size: 30, weight: .black, design: .rounded))
+                                
+                                Text(user.subteam)
+                                    .foregroundStyle(Color.white)
+                                    .font(.system(size: 20, weight: .medium, design: .rounded))
+                                    .padding(10)
+                            }
                         }.animation(.default, value: successViewShown)
-                            .offset(x: successViewShown ? 0: geo.size.width)
-                            .frame(width: geo.size.width/3)
-                        //}
+                        .offset(x: successViewShown ? 0 : geo.size.width)
+                        .frame(width: geo.size.width/3)
                         
-                        //if successViewShown {
                         Spacer()
                             .animation(.default, value: successViewShown)
-                            .offset(x: successViewShown ? 0: geo.size.width)
+                            .offset(x: successViewShown ? 0 : geo.size.width)
                             .frame(width: geo.size.width/3)
-                        //}
                     }
                     
                     Spacer()
                 }
             }
-            .fileExporter(
-                isPresented: $isExporting,
-                document: CSVFile(initialText: csvData),
-                contentType: .commaSeparatedText,
-                defaultFilename: "entries"
-            ) { result in
-                if case .success = result {
-                    print("File exported successfully")
-                } else {
-                    print("File export failed")
-                }
-            }
+            .sheet(isPresented: $isScanning) {
+                PlayerContainerView(captureSession: viewModel.captureSession)
+                                .frame(height: 300)
+                        }
         }
-        .frame(minWidth: 400, minHeight: 600)
-        .onAppear {
-#if os(macOS)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                NSApp.mainWindow?.toggleFullScreen(nil)
-            }
-#endif
-        }
+        .frame(minWidth: 800, minHeight: 600)
     }
     
-    private func addEntry() {
-        if !newEntryName.isEmpty {
-            let capitalizedName = newEntryName.capitalizedFirstLetterOfEachWord()
-            let newEntry = Entry(name: capitalizedName, date: Date())
-            entryStore.addEntry(capitalizedName)
-            lastEntry = capitalizedName
-            newEntryName = ""
+    private func checkIn() {
+        attendanceStore.checkInUser(id: newEntryId)
+        newEntryId = ""
+        withAnimation {
             successViewShown = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            withAnimation {
                 successViewShown = false
+                attendanceStore.checkedInUser = nil
             }
         }
     }
+}
+
+
+struct CameraPreview: NSViewRepresentable {
+    let session: AVCaptureSession
     
-    private func prepareExport() {
-        csvData = entryStore.exportToCSV()
-        isExporting = true
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView(frame: .zero)
+        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        previewLayer.frame = view.bounds
+        previewLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        previewLayer.videoGravity = .resizeAspectFill
+        view.layer = previewLayer
+        view.wantsLayer = true
+        return view
     }
+    
+    func updateNSView(_ nsView: NSView, context: Context) {}
 }
 
 
