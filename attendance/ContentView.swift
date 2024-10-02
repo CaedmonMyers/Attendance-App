@@ -1,146 +1,117 @@
 import SwiftUI
+import Firebase
+import FirebaseFirestore
 
 struct ContentView: View {
-    @EnvironmentObject private var entryStore: EntryStore
-    @State private var newEntryName = ""
-    @State private var csvData = ""
-    @State private var isExporting = false
-    @State private var successViewShown = false
-    @State private var lastEntry = ""
+    @State private var isAdminPanelPresented = false
+    @StateObject private var checkInViewModel = CheckInViewModel()
     
     var body: some View {
-        GeometryReader { geo in
-            ZStack {
-                LinearGradient(colors: [Color.blue.opacity(successViewShown ? 0.7: 0.4), Color.purple.opacity(successViewShown ? 0.7: 0.4)], startPoint: .leading, endPoint: .trailing)
-                    .edgesIgnoringSafeArea(.all)
-                    .animation(.default, value: successViewShown)
-                
-                VStack {
-                    Spacer()
-                    
-                    HStack {
-                        VStack {
-                            
-                            Text("Check In")
-                                .foregroundStyle(Color.white)
-                                .font(.system(size: 50, weight: .bold, design: .rounded))
-                                .animation(.default, value: newEntryName)
-                            
-                            CustomTextField(text: $newEntryName, placeholder: "Enter a new item", onCommit: addEntry)
-                                .frame(width: 300, height: 50)
-                                .padding()
-                                .animation(.default, value: newEntryName)
-                                .onKeyPress(.escape) {
-                                    newEntryName = ""
-                                    return .handled
-                                }
-                            
-                            if !newEntryName.isEmpty {
-                                Button(action: addEntry) {
-                                    Text("Add Entry")
-                                }
-                                .buttonStyle(CustomButtonStyle())
-                                .animation(.default, value: newEntryName)
-                            }
-                            
-                            if entryStore.showEntries {
-                                ScrollView {
-                                    VStack(spacing: 10) {
-                                        ForEach(entryStore.entries) { entry in
-                                            EntryView(entry: entry)
-                                        }
-                                    }
-                                    .padding()
-                                }
-                                .frame(maxHeight: 300)
-                                
-                                Button("Export Data", action: prepareExport)
-                                    .buttonStyle(CustomButtonStyle())
-                                    .padding(20)
-                            }
-                            
-                        }.animation(.default, value: successViewShown)
-                            .frame(width: successViewShown ? geo.size.width/3: geo.size.width)
-                        
-                        //if successViewShown {
-                        VStack {
-                            Text("Success!")
-                                .foregroundStyle(Color.white)
-                                .font(.system(size: 50, weight: .bold, design: .rounded))
-                                .animation(.default, value: successViewShown)
-                                .padding(20)
-                            
-                            Text("You have been checked in as:")
-                                .foregroundStyle(Color.white)
-                                .font(.system(size: 20, weight: .medium, design: .rounded))
-                                .animation(.default, value: successViewShown)
-                                .padding(10)
-                            
-                            //                                Text(entryStore.entries.last?.name ?? "")
-                            //                                    .foregroundStyle(Color.white)
-                            //                                    .font(.system(size: 30, weight: .black, design: .rounded))
-                            //                                    .animation(.default, value: newEntryName)
-                            TypewriterView(text: $lastEntry)
-                                .animation(.default, value: successViewShown)
-                            
-                        }.animation(.default, value: successViewShown)
-                            .offset(x: successViewShown ? 0: geo.size.width)
-                            .frame(width: geo.size.width/3)
-                        //}
-                        
-                        //if successViewShown {
-                        Spacer()
-                            .animation(.default, value: successViewShown)
-                            .offset(x: successViewShown ? 0: geo.size.width)
-                            .frame(width: geo.size.width/3)
-                        //}
-                    }
-                    
-                    Spacer()
-                }
-            }
-            .fileExporter(
-                isPresented: $isExporting,
-                document: CSVFile(initialText: csvData),
-                contentType: .commaSeparatedText,
-                defaultFilename: "entries"
-            ) { result in
-                if case .success = result {
-                    print("File exported successfully")
-                } else {
-                    print("File export failed")
-                }
-            }
+        NavigationView {
+            CheckInView(viewModel: checkInViewModel)
         }
-        .frame(minWidth: 400, minHeight: 600)
-        .onAppear {
-#if os(macOS)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                NSApp.mainWindow?.toggleFullScreen(nil)
-            }
-#endif
+        .sheet(isPresented: $isAdminPanelPresented) {
+            AdminPanelView()
         }
-    }
-    
-    private func addEntry() {
-        if !newEntryName.isEmpty {
-            let capitalizedName = newEntryName.capitalizedFirstLetterOfEachWord()
-            let newEntry = Entry(name: capitalizedName, date: Date())
-            entryStore.addEntry(capitalizedName)
-            lastEntry = capitalizedName
-            newEntryName = ""
-            successViewShown = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                successViewShown = false
-            }
+        .onReceive(NotificationCenter.default.publisher(for: .openAdminPanel)) { _ in
+            isAdminPanelPresented.toggle()
         }
-    }
-    
-    private func prepareExport() {
-        csvData = entryStore.exportToCSV()
-        isExporting = true
     }
 }
+
+struct CheckInView: View {
+    @ObservedObject var viewModel: CheckInViewModel
+    @State private var searchText = ""
+    
+    var body: some View {
+        VStack {
+            TextField("Enter your name", text: $searchText)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .onChange(of: searchText) { newValue in
+                    viewModel.filterUsers(with: newValue)
+                }
+            
+            List(viewModel.filteredUsers, id: \.email) { user in
+                Text(user.name)
+                    .onTapGesture {
+                        searchText = user.name
+                    }
+            }
+            
+            Button("Continue") {
+                viewModel.checkIn(name: searchText)
+            }
+            .disabled(searchText.isEmpty)
+            .keyboardShortcut(.defaultAction)
+        }
+        .padding()
+        .onAppear {
+            viewModel.fetchUsers()
+        }
+    }
+}
+
+class CheckInViewModel: ObservableObject {
+    @Published var filteredUsers: [User] = []
+    private var allUsers: [User] = []
+    private let db = Firestore.firestore()
+    
+    func fetchUsers() {
+        db.collection("Users").getDocuments { [weak self] (querySnapshot, error) in
+            guard let self = self else { return }
+            if let error = error {
+                print("Error getting users: \(error)")
+            } else {
+                self.allUsers = querySnapshot?.documents.compactMap { document in
+                    try? document.data(as: User.self)
+                } ?? []
+                self.filteredUsers = self.allUsers
+            }
+        }
+    }
+    
+    func filterUsers(with searchText: String) {
+        if searchText.isEmpty {
+            filteredUsers = allUsers
+        } else {
+            filteredUsers = allUsers.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+        }
+    }
+    
+    func checkIn(name: String) {
+        guard let user = allUsers.first(where: { $0.name == name }) else { return }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateString = dateFormatter.string(from: Date())
+        
+        let attendanceRef = db.collection("Attendance").document(dateString)
+        
+        attendanceRef.getDocument { [weak self] (document, error) in
+            guard let self = self else { return }
+            if let document = document, document.exists {
+                // Update existing document
+                attendanceRef.updateData([
+                    "attendees": FieldValue.arrayUnion([user.email])
+                ])
+            } else {
+                // Create new document
+                let newAttendance = Attendance(date: Date(), description: "Check-in for \(dateString)", attendees: [user.email])
+                try? attendanceRef.setData(from: newAttendance)
+            }
+        }
+    }
+}
+
+
+
+
+struct Attendance: Codable {
+    let date: Date
+    let description: String
+    let attendees: [String]
+}
+
 
 
 extension String {

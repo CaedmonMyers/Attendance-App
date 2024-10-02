@@ -1,36 +1,28 @@
-
-
 import SwiftUI
+import Firebase
 
 @main
-struct TextEntryApp: App {
-    @StateObject private var entryStore = EntryStore()
+struct AttendanceApp: App {
+    
+    init() {
+        FirebaseApp.configure()
+    }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(entryStore)
         }
         .commands {
-            CommandGroup(replacing: .newItem) {}
-            CommandGroup(replacing: .pasteboard) {}
-            CommandGroup(replacing: .undoRedo) {}
-            
-            CommandMenu("Entries") {
-                Button("Clear All Entries") {
-                    entryStore.clearAllEntries()
+            CommandGroup(after: .sidebar) {
+                Button("Open Admin Panel") {
+                    NotificationCenter.default.post(name: .openAdminPanel, object: nil)
                 }
-                //.keyboardShortcut("D", modifiers: [.command, .shift])
-                
-                Divider()
-                
-                Button("Toggle Entries Visibility") {
-                    withAnimation {
-                        entryStore.toggleEntriesVisibility()
-                    }
-                }
-                .keyboardShortcut("E", modifiers: [.command])
+                .keyboardShortcut("e", modifiers: .command)
             }
         }
     }
+}
+
+extension Notification.Name {
+    static let openAdminPanel = Notification.Name("openAdminPanel")
 }
