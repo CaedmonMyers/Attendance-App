@@ -7,22 +7,66 @@ import UniformTypeIdentifiers
 struct AdminPanelView: View {
     @StateObject private var viewModel = AdminPanelViewModel()
     @State private var selectedTab = 0
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
-        TabView(selection: $selectedTab) {
-            UserManagementView(viewModel: viewModel)
-                .tabItem {
-                    Label("User Management", systemImage: "person.3")
+        GeometryReader { geo in
+            ZStack {
+                LinearGradient(colors: [Color.green.opacity(0.4), Color.blue.opacity(0.4)], startPoint: .leading, endPoint: .trailing)
+                    .edgesIgnoringSafeArea(.all)
+                
+                VStack {
+                    HStack {
+                        Text("Admin Panel")
+                            .foregroundStyle(Color.white)
+                            .font(.system(size: 40, weight: .bold, design: .rounded))
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            presentationMode.wrappedValue.dismiss()
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.white)
+                                .font(.system(size: 24))
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                    .padding()
+                    
+                    TabView(selection: $selectedTab) {
+                        UserManagementView(viewModel: viewModel)
+                            .tabItem {
+                                Label("User Management", systemImage: "person.3")
+                            }
+                            .tag(0)
+                        
+                        AttendanceView(viewModel: viewModel)
+                            .tabItem {
+                                Label("Attendance", systemImage: "calendar")
+                            }
+                            .tag(1)
+                        
+                        Button("Export to CSV") {
+                            viewModel.exportToCSV()
+                        }
+                        .buttonStyle(CustomButtonStyle())
+                        .tabItem {
+                            Label("Export", systemImage: "person.2")
+                        }
+                        .tag(2)
+                    }
+                    .frame(height: geo.size.height * 0.95)
+                    .background(Color.white.opacity(0.8))
+                    .cornerRadius(20)
+                    .padding()
                 }
-                .tag(0)
-            
-            AttendanceView(viewModel: viewModel)
-                .tabItem {
-                    Label("Attendance", systemImage: "calendar")
-                }
-                .tag(1)
+            }
+            .onDisappear() {
+                //viewModel.fetchUsers()
+            }
         }
-        .padding()
+        .frame(minWidth: 800, minHeight: 700)
     }
 }
 
@@ -30,13 +74,15 @@ struct User: Codable, Identifiable {
     let id: String
     var name: String
     var email: String
+    var subteam: String
     var grade: String
     var studentId: String
     
-    init(id: String = UUID().uuidString, name: String, email: String, grade: String, studentId: String) {
+    init(id: String = UUID().uuidString, name: String, email: String, subteam: String, grade: String, studentId: String) {
         self.id = id
         self.name = name
         self.email = email
+        self.subteam = subteam
         self.grade = grade
         self.studentId = studentId
     }
@@ -45,25 +91,28 @@ struct User: Codable, Identifiable {
 // Update the UserManagementView
 struct UserManagementView: View {
     @ObservedObject var viewModel: AdminPanelViewModel
-    @State private var newUser = User(name: "", email: "", grade: "", studentId: "")
+    @State private var newUser = User(name: "", email: "", subteam: "", grade: "", studentId: "")
     @State private var isEditing = false
     
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             List {
                 ForEach(viewModel.users) { user in
-                    UserRow(user: user, viewModel: viewModel)
+                    UserRow(user: user, viewModel: viewModel, editingUser: $newUser, isEditing: $isEditing)
                 }
                 .onDelete(perform: viewModel.deleteUser)
             }
+            .frame(height: 150)
+            .listStyle(PlainListStyle())
+            .background(Color.white.opacity(0.6))
+            .cornerRadius(10)
             
-            Divider()
-            
-            VStack {
-                TextField("Name", text: $newUser.name)
-                TextField("Email", text: $newUser.email)
-                TextField("Grade", text: $newUser.grade)
-                TextField("Student ID", text: $newUser.studentId)
+            VStack(spacing: 10) {
+                CustomTextField(text: $newUser.name, placeholder: "Name", onCommit: {})
+                CustomTextField(text: $newUser.email, placeholder: "Email", onCommit: {})
+                CustomTextField(text: $newUser.subteam, placeholder: "Subteam", onCommit: {})
+                CustomTextField(text: $newUser.grade, placeholder: "Grade", onCommit: {})
+                CustomTextField(text: $newUser.studentId, placeholder: "Student ID", onCommit: {})
                 
                 Button(isEditing ? "Update User" : "Add User") {
                     if isEditing {
@@ -72,29 +121,43 @@ struct UserManagementView: View {
                     } else {
                         viewModel.addUser(newUser)
                     }
-                    newUser = User(name: "", email: "", grade: "", studentId: "")
+                    newUser = User(name: "", email: "", subteam: "", grade: "", studentId: "")
                 }
+                .buttonStyle(CustomButtonStyle())
             }
+            .padding()
+            .background(Color.white.opacity(0.6))
+            .cornerRadius(10)
         }
+        .padding()
     }
 }
 
 struct UserRow: View {
     let user: User
     @ObservedObject var viewModel: AdminPanelViewModel
+    @Binding var editingUser: User
+    @Binding var isEditing: Bool
     
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
                 Text(user.name)
+                    .font(.headline)
                 Text(user.email)
-                    .font(.caption)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
             }
             Spacer()
             Button("Edit") {
-                viewModel.selectUserForEditing(user)
+                editingUser = user
+                isEditing = true
             }
+            .buttonStyle(CustomButtonStyle())
         }
+        .padding()
+        .background(Color.white.opacity(0.3))
+        .cornerRadius(10)
     }
 }
 
@@ -103,12 +166,16 @@ struct AttendanceView: View {
     @State private var selectedDate: String = ""
     
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             Picker("Select Date", selection: $selectedDate) {
                 ForEach(viewModel.attendanceDates, id: \.self) { date in
                     Text(date).tag(date)
                 }
             }
+            .pickerStyle(MenuPickerStyle())
+            .padding()
+            .background(Color.white.opacity(0.8))
+            .cornerRadius(10)
             .onChange(of: selectedDate) { newValue in
                 viewModel.fetchAttendanceForDate(newValue)
             }
@@ -116,15 +183,21 @@ struct AttendanceView: View {
             List(viewModel.attendees, id: \.email) { attendee in
                 VStack(alignment: .leading) {
                     Text(attendee.name)
+                        .font(.headline)
                     Text(attendee.email)
+                        .font(.subheadline)
                     Text("Student ID: \(attendee.studentId)")
+                        .font(.caption)
                 }
+                .padding()
+                .background(Color.white.opacity(0.3))
+                .cornerRadius(10)
             }
-            
-            Button("Export to CSV") {
-                viewModel.exportToCSV()
-            }
+            .listStyle(PlainListStyle())
+            .background(Color.white.opacity(0.6))
+            .cornerRadius(10)
         }
+        .padding()
         .onAppear {
             viewModel.fetchAttendanceDates()
         }
@@ -135,6 +208,7 @@ class AdminPanelViewModel: ObservableObject {
     @Published var users: [User] = []
     @Published var attendanceDates: [String] = []
     @Published var attendees: [User] = []
+    @Published var selectedDate: String = ""
     
     private let db = Firestore.firestore()
     
@@ -143,16 +217,129 @@ class AdminPanelViewModel: ObservableObject {
     }
     
     func fetchUsers() {
-        db.collection("Users").getDocuments { (querySnapshot, error) in
+        db.collection("Users").getDocuments { [weak self] (querySnapshot, error) in
+            guard let self = self else { return }
             if let error = error {
-                print("Error getting users: \(error)")
+                print("Error getting users: \(error.localizedDescription)")
             } else {
                 self.users = querySnapshot?.documents.compactMap { document in
-                    try? document.data(as: User.self)
+                    do {
+                        let user = try document.data(as: User.self)
+                        return user
+                    } catch {
+                        print("Error decoding user document \(document.documentID): \(error.localizedDescription)")
+                        // Attempt to create a User with available data
+                        let data = document.data()
+                        return User(
+                            id: document.documentID,
+                            name: data["name"] as? String ?? "",
+                            email: data["email"] as? String ?? "",
+                            subteam: data["subteam"] as? String ?? "",
+                            grade: data["grade"] as? String ?? "",
+                            studentId: data["studentId"] as? String ?? ""
+                        )
+                    }
                 } ?? []
+                print("Fetched \(self.users.count) users")
             }
         }
     }
+    
+    func fetchAttendanceDates() {
+        db.collection("Attendance").getDocuments { [weak self] (querySnapshot, error) in
+            guard let self = self else { return }
+            if let error = error {
+                print("Error getting attendance dates: \(error.localizedDescription)")
+            } else {
+                self.attendanceDates = querySnapshot?.documents.compactMap { document -> String? in
+                    if let date = (document.data()["date"] as? Timestamp)?.dateValue() {
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd"
+                        return dateFormatter.string(from: date)
+                    }
+                    return nil
+                }.sorted().reversed() ?? []
+                
+                if let mostRecentDate = self.attendanceDates.first {
+                    self.selectedDate = mostRecentDate
+                    self.fetchAttendanceForDate(mostRecentDate)
+                }
+            }
+        }
+    }
+    
+    func fetchAttendanceForDate(_ date: String) {
+        db.collection("Attendance").document(date).getDocument { [weak self] (document, error) in
+            guard let self = self else { return }
+            if let error = error {
+                print("Error fetching attendance for date \(date): \(error.localizedDescription)")
+                return
+            }
+            
+            guard let document = document, document.exists else {
+                print("Attendance document does not exist for date \(date)")
+                self.attendees = []
+                return
+            }
+            
+            do {
+                let attendance = try document.data(as: Attendance.self)
+                self.fetchAttendeesDetails(emails: attendance.attendees)
+            } catch {
+                print("Error decoding attendance document for date \(date): \(error.localizedDescription)")
+                // Attempt to create Attendance with available data
+                if let data = document.data(),
+                   let attendees = data["attendees"] as? [String] {
+                    self.fetchAttendeesDetails(emails: attendees)
+                } else {
+                    self.attendees = []
+                }
+            }
+        }
+    }
+    
+    func fetchAttendeesDetails(emails: [String]) {
+        let group = DispatchGroup()
+        var fetchedAttendees: [User] = []
+        
+        for email in emails {
+            group.enter()
+            db.collection("Users").document(email).getDocument { (document, error) in
+                defer { group.leave() }
+                if let error = error {
+                    print("Error fetching user details for email \(email): \(error.localizedDescription)")
+                    return
+                }
+                
+                if let document = document, document.exists {
+                    do {
+                        let user = try document.data(as: User.self)
+                        fetchedAttendees.append(user)
+                    } catch {
+                        print("Error decoding user document for email \(email): \(error.localizedDescription)")
+                        // Attempt to create User with available data
+                        let data = document.data() ?? [:]
+                        let user = User(
+                            id: document.documentID,
+                            name: data["name"] as? String ?? "",
+                            email: email,
+                            subteam: data["subteam"] as? String ?? "",
+                            grade: data["grade"] as? String ?? "",
+                            studentId: data["studentId"] as? String ?? ""
+                        )
+                        fetchedAttendees.append(user)
+                    }
+                } else {
+                    fetchedAttendees.append(User(name: "Unknown", email: email, subteam: "Unknown", grade: "Unknown", studentId: "Unknown"))
+                }
+            }
+        }
+        
+        group.notify(queue: .main) {
+            self.attendees = fetchedAttendees
+        }
+    }
+
     
     func addUser(_ user: User) {
         do {
@@ -181,55 +368,7 @@ class AdminPanelViewModel: ObservableObject {
     }
     
     func selectUserForEditing(_ user: User) {
-        // Implement this method to handle user editing
-    }
-    
-    func fetchAttendanceDates() {
-        db.collection("Attendance").getDocuments { (querySnapshot, error) in
-            if let error = error {
-                print("Error getting attendance dates: \(error)")
-            } else {
-                self.attendanceDates = querySnapshot?.documents.compactMap { $0.documentID }.sorted().reversed() ?? []
-                if let firstDate = self.attendanceDates.first {
-                    self.fetchAttendanceForDate(firstDate)
-                }
-            }
-        }
-    }
-    
-    func fetchAttendanceForDate(_ date: String) {
-        db.collection("Attendance").document(date).getDocument { (document, error) in
-            if let document = document, document.exists {
-                if let attendance = try? document.data(as: Attendance.self) {
-                    self.fetchAttendeesDetails(emails: attendance.attendees)
-                }
-            } else {
-                print("Attendance document does not exist")
-            }
-        }
-    }
-    
-    func fetchAttendeesDetails(emails: [String]) {
-        let group = DispatchGroup()
-        var fetchedAttendees: [User] = []
         
-        for email in emails {
-            group.enter()
-            db.collection("Users").document(email).getDocument { (document, error) in
-                if let document = document, document.exists {
-                    if let user = try? document.data(as: User.self) {
-                        fetchedAttendees.append(user)
-                    }
-                } else {
-                    fetchedAttendees.append(User(name: "Unknown", email: email, grade: "Unknown", studentId: "Unknown"))
-                }
-                group.leave()
-            }
-        }
-        
-        group.notify(queue: .main) {
-            self.attendees = fetchedAttendees
-        }
     }
 }
 
@@ -291,6 +430,9 @@ extension AdminPanelViewModel {
         return csvString
     }
     
+
+    #if os(macOS)
+
     private func saveCSVToFile(_ csvString: String) {
         let savePanel = NSSavePanel()
         savePanel.allowedContentTypes = [UTType.commaSeparatedText]
@@ -311,4 +453,29 @@ extension AdminPanelViewModel {
             }
         }
     }
+    #endif
+
+    #if os(iOS)
+
+    private func saveCSVToFile(_ csvString: String, viewController: UIViewController) {
+        guard let data = csvString.data(using: .utf8) else {
+            print("Error converting CSV string to data")
+            return
+        }
+        
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("attendance_export.csv")
+        
+        do {
+            try data.write(to: tempURL)
+            let documentPicker = UIDocumentPickerViewController(forExporting: [tempURL])
+            viewController.present(documentPicker, animated: true, completion: nil)
+            
+            print("CSV file prepared for saving")
+            // TODO: Show success message to user
+        } catch {
+            print("Error preparing CSV file for saving: \(error.localizedDescription)")
+            // TODO: Show error to user
+        }
+    }
+    #endif
 }
